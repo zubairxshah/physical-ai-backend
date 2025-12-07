@@ -1,13 +1,19 @@
+# render.yaml
 services:
   - type: web
     name: physical-ai-backend
     runtime: python
     region: oregon
     plan: free
-    buildCommand: pip install -r requirements_simple.txt
-    startCommand: uvicorn main_simple:app --host 0.0.0.0 --port $PORT
     branch: main
-    rootDir: .
+    rootDir: .                     # optional, but explicit is good
+    buildCommand: pip install -r requirements_simple.txt
+    startCommand: uvicorn main_simple:app --host 0.0.0.0 --port ${PORT}   # <-- better: ${PORT}
+    
     envVars:
       - key: OPENAI_API_KEY
-        sync: false
+        sync: false               # correct: you’ll enter it manually in dashboard (safer)
+
+    # Highly recommended additions for FastAPI on Render
+    healthCheckPath: /health      # prevents "service failed to start" false positives
+    autoDeploy: true
